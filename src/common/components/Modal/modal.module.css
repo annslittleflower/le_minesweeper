@@ -9,6 +9,7 @@
   padding: 0 3rem;
   display: flex;
   align-items: center;
+  user-select: none;
 }
 
 .modalContent {
@@ -19,5 +20,5 @@
   overflow: auto;
   background-color: white;
   padding: 2rem;
-  width: 100%;
+  max-width: 100%;
 }

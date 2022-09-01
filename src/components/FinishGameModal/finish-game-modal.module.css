@@ -1,0 +1,13 @@
+.actionButtonText {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.actionButton {
+  min-width: 200px;
+  border: 2px solid #ff001e;
+  cursor: pointer;
+  min-height: 3rem;
+  font-size: 1.5rem;
+  border-radius: 1rem;
+}

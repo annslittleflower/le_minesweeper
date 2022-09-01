@@ -1,56 +1,69 @@
 import { useState } from 'react'
-import Modal from "./components/Modal/Modal";
+import { FinishGameModal, FinishGameModalProps } from './components/FinishGameModal';
+import { StartScreen } from './screens/StartScreen'
+import GameConfig from './common/types/gameConfig'
 
-/*
-  TODO
+const STARTING = 'STARTING'
+const GAME_IS_ON = 'GAME_IS_ON'
+const GAME_IS_LOST = 'GAME_IS_LOST'
+const GAME_IS_WON = 'GAME_IS_WON'
+ 
+type GAME_STATE_KEYS_TYPE = keyof typeof CURRENT_GAME_STATE_TYPE_MAP
 
-  possible general app state
+const CURRENT_GAME_STATE_TYPE_MAP = {
+  STARTING: STARTING,
+  GAME_IS_ON: GAME_IS_ON,
+  GAME_IS_LOST: GAME_IS_LOST,
+  GAME_IS_WON: GAME_IS_WON
+}
 
-  START (here we have form to enter rows number, cols number, mines number) (localstorage this setup)
+// type GAME_STATE_KEYS_MODAL = keyof Pick<typeof CURRENT_GAME_STATE_TYPE_MAP, 'GAME_IS_LOST' | 'GAME_IS_WON'>
+// TODO not string
+type ModalPropsMapType = {
+  [key: string]: Omit<FinishGameModalProps, 'onClose'>
+}
 
-  GAME_IS_ON (render board with cells) (on every move localstorage this setup)
-
-*/
+const ModalPropsMap: ModalPropsMapType = {
+  [CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_LOST] : {
+    onActionButtonClick: () => console.log('restart game'),
+    actionButtonText: 'Try again',
+    gameResultText: 'You lost :(',
+    blockBackgroundClosing: true
+  },
+  [CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_WON]: {
+    onActionButtonClick: () => console.log('restart game'),
+    actionButtonText: 'Try again',
+    gameResultText: 'You lost :(',
+    blockBackgroundClosing: true
+  }
+}
 
 const App = () => {
-  const [isModalOpened, setIsModalOpened ] = useState(false)
+  const [currentGameState, setCurrentGameState] = useState<GAME_STATE_KEYS_TYPE>(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE)
+  const [isGameResultModalOpened, setIsGameResultModalOpened ] = useState(false)
+  const [gameConfigNumbers, setGameConfigNumbers] = useState<GameConfig | undefined>(undefined)
+
+  console.log('gameConfigNumbers', gameConfigNumbers)
+
   return (
     <div>
-      <button onClick={() => setIsModalOpened(true)}>OPEN ME</button>
-      <div style={{ width: 2000}}>
-        hello
-      </div>
-      <Modal isOpened={isModalOpened} onClose={() => setIsModalOpened(false)}>
-        <p>heee</p>
-        <p>heee</p>
-        <p onClick={() => console.log('hello')}>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-        <p>heee</p>
-      </Modal>
+      {/* <button onClick={() => setIsGameResultModalOpened(true)}>OPEN ME</button> */}
+
+      {currentGameState === CURRENT_GAME_STATE_TYPE_MAP.STARTING ? (
+        <StartScreen setGameConfigNumbers={setGameConfigNumbers} />
+      ): null}
+
+      {isGameResultModalOpened && (
+        currentGameState === CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_LOST ||
+        currentGameState === CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_WON) ? (
+          <FinishGameModal
+            {...ModalPropsMap[currentGameState]}
+            onClose={() => {
+              setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE)
+              setIsGameResultModalOpened(false)
+            }}
+          />
+      ) : null}
     </div>
   );
 }
