@@ -3,8 +3,8 @@ import styles from './start-screen.module.css'
 import GameConfig from '../../common/types/gameConfig'
 
 
-const MIN_ROWS = 10;
-const MIN_COLS = 10;
+const MIN_ROWS = 5; // TODO min 10
+const MIN_COLS = 5; // TODO min 10
 const MIN_BOMBS = 2;
 
 
@@ -12,6 +12,7 @@ const GAME_CONFIG_LOCALSTORAGE_KEY = 'GAME_CONFIG';
 
 interface StartScreenProps {
   setGameConfigNumbers: React.Dispatch<React.SetStateAction<GameConfig | undefined>>
+  startGame: () => void;
 }
 
 const initialConfig = {
@@ -23,7 +24,7 @@ const initialConfig = {
 const savedConfig = localStorage.getItem(GAME_CONFIG_LOCALSTORAGE_KEY)
 const parsedConfig = savedConfig ? JSON.parse(savedConfig) : initialConfig 
 
-export const StartScreen = ({ setGameConfigNumbers }: StartScreenProps) => {
+export const StartScreen = ({ setGameConfigNumbers, startGame }: StartScreenProps) => {
   const idForForm = useId()
   const [rowsNumber, setRowsNumber] = useState(parsedConfig.rowsNumber)
   const [colsNumber, setColsNumber] = useState(parsedConfig.colsNumber)
@@ -41,6 +42,7 @@ export const StartScreen = ({ setGameConfigNumbers }: StartScreenProps) => {
     localStorage.setItem(GAME_CONFIG_LOCALSTORAGE_KEY, JSON.stringify(config))
     setGameConfigNumbers(config)
     console.log(config)
+    startGame()
   }
 
   return (

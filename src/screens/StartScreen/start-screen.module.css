@@ -36,7 +36,7 @@
 
 .submitButton {
   min-width: 200px;
-  border: 2px solid #4c00ff;
+  border: 2px solid #ff001e;
   cursor: pointer;
   min-height: 3rem;
   font-size: 1.5rem;
@@ -46,4 +46,9 @@
 
 .submitButton:disabled {
   border: 2px solid #d0bcff;
+}
+
+.submitButton:hover {
+  background-color: #ff001e;
+  color: white;
 }

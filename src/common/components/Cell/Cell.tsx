@@ -1,7 +1,14 @@
-const Cell = () => {
-  return <div>
-    hello cell
-  </div>
+import styles from './cell.module.css'
+
+interface CellProps {
+  displayState: string; // TODO rename, use typings
 }
 
-export default Cell
+export const Cell = ({ displayState }: CellProps) => {
+  return (
+    <div className={styles.cell}>
+      {displayState}
+    </div>
+  )
+}
+
