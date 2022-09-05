@@ -33,22 +33,3 @@
   font-size: 1rem;
   height: 2.5rem;
 }
-
-.submitButton {
-  min-width: 200px;
-  border: 2px solid #ff001e;
-  cursor: pointer;
-  min-height: 3rem;
-  font-size: 1.5rem;
-  border-radius: 10px;
-  background-color: white;
-}
-
-.submitButton:disabled {
-  border: 2px solid #d0bcff;
-}
-
-.submitButton:hover {
-  background-color: #ff001e;
-  color: white;
-}

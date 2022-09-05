@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
 import styles from './start-screen.module.css'
 import GameConfig from '../../common/types/gameConfig'
-
+import { Button } from '../../common/components/Button'
 
 const MIN_ROWS = 5; // TODO min 10
 const MIN_COLS = 5; // TODO min 10
@@ -95,7 +95,7 @@ export const StartScreen = ({ setGameConfigNumbers, startGame }: StartScreenProp
           value={bombsNumber}
           onChange={({target}) => setBombsNumber(target.valueAsNumber || MIN_BOMBS)}
         />
-        <button className={styles.submitButton} type="submit">PLAY !!!</button>
+        <Button type="submit">PLAY !!!</Button>
       </form>
     </div>
   )

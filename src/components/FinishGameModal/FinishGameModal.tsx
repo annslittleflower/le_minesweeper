@@ -1,4 +1,5 @@
 import { Modal, ModalProps } from "../../common/components/Modal"
+import { Button } from "../../common/components/Button"
 import styles from "./finish-game-modal.module.css"
 
 export interface FinishGameModalProps extends Omit<ModalProps, 'children'> {
@@ -11,9 +12,9 @@ export const FinishGameModal = ({ onActionButtonClick, gameResultText, actionBut
   return (
     <Modal {...rest}>
       <div className={styles.actionButtonText}>{gameResultText}</div>
-      <button className={styles.actionButton} onClick={onActionButtonClick}>
+      <Button onClick={onActionButtonClick}>
         {actionButtonText}
-      </button>
+      </Button>
     </Modal>
   )
 }
