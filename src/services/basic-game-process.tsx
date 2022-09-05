@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { shuffle } from '../utils/array-helpers'
 import GameConfig from '../common/types/gameConfig'
 import { cellTypesMap, CellTypes } from '../common/types/cellTypes'
@@ -7,7 +7,8 @@ interface NormalizedObject {
   [key: string] : {
     cellType: keyof CellTypes,
     isRevealed: boolean,
-    isFlagged: boolean
+    isFlagged: boolean,
+    minesNumber: number
   }
 }
 
@@ -23,12 +24,13 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
         tempNormalizedObject[`${currentRow},${currentCol}`] = {
           cellType: board[currentRow * gameConfig.colsNumber + currentCol] as keyof CellTypes,
           isRevealed: false,
-          isFlagged: false
+          isFlagged: false,
+          minesNumber: 0
         }
       }
     }
 
-    console.log('board', board)
+    console.log('HINT:', board)
 
     return tempNormalizedObject
   }, [gameConfig])
@@ -44,8 +46,6 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
     setNormalizedObject({...normalizedObject})
   }
 
-  console.log('normalizedObject', normalizedObject)
-
   const revealCell = (cellIndex: string) => {
     const { isFlagged, isRevealed, cellType } = normalizedObject[cellIndex]
 
@@ -59,15 +59,29 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
 
     normalizedObject[cellIndex].isRevealed = true
 
-    let mineNumber = 0;
+    let minesNumber = 0;
 
-    const [rowCoord, colCoord] = cellIndex.split(',')
+    const [rowCoord, colCoord] = cellIndex.split(',').map(i => +i)
 
-    // for (let i=Math.max(cellRow-1,0); i<=Math.min(cellRow+1,9); i++) {
-    //   for(let j=Math.max(cellCol-1,0); j<=Math.min(cellCol+1,9); j++) {
-    //     if (grid.rows[i].cells[j].getAttribute("data-mine")=="true") mineCount++;
-    //   }
-    // }
+    for (let r=Math.max(rowCoord - 1, 0); r<=Math.min(rowCoord + 1, gameConfig.rowsNumber - 1); r++) {
+      for(let c=Math.max(colCoord - 1, 0); c<=Math.min(colCoord + 1, gameConfig.colsNumber - 1); c++) {
+        if (normalizedObject[`${r},${c}`].cellType === cellTypesMap.bomb) {
+          minesNumber++;
+        }
+      }
+    }
+
+    if (minesNumber === 0) {
+      for (let r=Math.max(rowCoord - 1, 0); r<=Math.min(rowCoord + 1, gameConfig.rowsNumber - 1); r++) {
+        for(let c=Math.max(colCoord - 1, 0); c<=Math.min(colCoord + 1, gameConfig.colsNumber - 1); c++) {
+          if (normalizedObject[`${r},${c}`].cellType === cellTypesMap.empty) {
+            revealCell(`${r},${c}`)
+          }
+        }
+      }
+    }
+
+    normalizedObject[cellIndex].minesNumber = minesNumber 
 
     setNormalizedObject({...normalizedObject})
 

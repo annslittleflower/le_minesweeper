@@ -18,7 +18,6 @@ export const Modal = ({onClose, children, blockBackgroundClosing = false}: Modal
   }, [])
 
   const closeModal = () => {
-    console.log('blockBackgroundClosing', blockBackgroundClosing)
     if (!blockBackgroundClosing) {
       onClose()
     }

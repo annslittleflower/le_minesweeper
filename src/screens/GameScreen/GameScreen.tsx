@@ -12,7 +12,6 @@ interface GameScreenProps {
 }
 
 export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenProps) => {
-  console.log('gameConfigNumbers', gameConfigNumbers)
   const {rowsNumber, colsNumber} = gameConfigNumbers;
 
   const { normalizedObject, hasUserWon, hasUserLost, revealCell, toggleFlag } = useBasicGameProcess(gameConfigNumbers)
@@ -36,7 +35,7 @@ export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenP
           <div className={styles.gameRow} key={r}>
             {arrayFromNumber(colsNumber).map((c) => {
               const currentIndex = `${r - 1},${c - 1}`;
-              const { cellType, isRevealed, isFlagged } = normalizedObject[currentIndex]
+              const { cellType, isRevealed, isFlagged, minesNumber } = normalizedObject[currentIndex]
               return (
                 <Cell
                   key={c}
@@ -46,6 +45,7 @@ export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenP
                   isFlagged={isFlagged}
                   toggleFlag={() => toggleFlag(currentIndex)}
                   revealCell={() => revealCell(currentIndex)}
+                  minesNumber={minesNumber}
                 />
             )})}
           </div>

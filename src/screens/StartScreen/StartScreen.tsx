@@ -3,8 +3,8 @@ import styles from './start-screen.module.css'
 import GameConfig from '../../common/types/gameConfig'
 import { Button } from '../../common/components/Button'
 
-const MIN_ROWS = 5; // TODO min 10
-const MIN_COLS = 5; // TODO min 10
+const MIN_ROWS = 5;
+const MIN_COLS = 5;
 const MIN_BOMBS = 2;
 
 
@@ -29,6 +29,7 @@ export const StartScreen = ({ setGameConfigNumbers, startGame }: StartScreenProp
   const [rowsNumber, setRowsNumber] = useState(parsedConfig.rowsNumber)
   const [colsNumber, setColsNumber] = useState(parsedConfig.colsNumber)
   const [bombsNumber, setBombsNumber] = useState(parsedConfig.bombsNumber)
+  const [formHasErrors, setFormHasErrors] = useState(false)
 
   const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,7 +42,6 @@ export const StartScreen = ({ setGameConfigNumbers, startGame }: StartScreenProp
 
     localStorage.setItem(GAME_CONFIG_LOCALSTORAGE_KEY, JSON.stringify(config))
     setGameConfigNumbers(config)
-    console.log(config)
     startGame()
   }
 
@@ -93,9 +93,20 @@ export const StartScreen = ({ setGameConfigNumbers, startGame }: StartScreenProp
           min={MIN_BOMBS}
           required={true}
           value={bombsNumber}
-          onChange={({target}) => setBombsNumber(target.valueAsNumber || MIN_BOMBS)}
+          onChange={({target}) => {
+            const {valueAsNumber} = target;
+            setBombsNumber(target.valueAsNumber || MIN_BOMBS)
+
+            if (valueAsNumber > (rowsNumber * colsNumber) - 1) {
+              setFormHasErrors(true)
+              return;
+            }
+
+            setFormHasErrors(false)
+          }}
         />
-        <Button type="submit">PLAY !!!</Button>
+        {formHasErrors ? <p className={styles.errorText}>Number of bombs should be less than (cols*rows) - 1</p> : null}
+        <Button disabled={formHasErrors} type="submit">PLAY !!!</Button>
       </form>
     </div>
   )

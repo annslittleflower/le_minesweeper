@@ -10,11 +10,13 @@
   display: block;
 }
 
-.button:disabled {
-  border: 2px solid #d0bcff;
-}
-
 .button:hover {
   background-color: #ff001e;
   color: white;
+}
+
+.button:disabled {
+  background-color: transparent;
+  border: 2px solid #d0bcff;
+  color: initial;
 }

@@ -19,8 +19,6 @@ const App = () => {
   const [gameConfigNumbers, setGameConfigNumbers] = useState<GameConfig | undefined>(undefined)
   const [seeResult, setSeeResult] = useState(false)
 
-  console.log('gameConfigNumbers', gameConfigNumbers)
-
   const ModalPropsMap: ModalPropsMapType = {
     [CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_LOST] : {
       onActionButtonClick: () => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE),
@@ -63,7 +61,6 @@ const App = () => {
           {...ModalPropsMap[currentGameState]}
           onClose={() => {
             setSeeResult(true)
-            // setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE)
             setIsGameResultModalOpened(false)
           }}
         />

@@ -2,6 +2,7 @@ export {
 
 }
 
+// to think about this concept
 // code play the whole game, i mean it does all calculations beforehand,
 // and user only opens the cells and looks if he guessed.
 // when user clicks on cells in this game variant - almost no code is run
