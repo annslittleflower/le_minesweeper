@@ -4,7 +4,7 @@ export interface CellTypes {
   flag: string;
 }
 
-export const cellTypesMap: CellTypes = {
+export const CellTypesMap: CellTypes = {
   bomb: '💣',
   empty: 'E',
   flag: '🚩'

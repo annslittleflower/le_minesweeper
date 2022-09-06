@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import GameConfig from '../../common/types/gameConfig'
 import { Cell } from '../../common/components/Cell'
-import { useBasicGameProcess } from '../../services/basic-game-process'
-import { arrayFromNumber } from '../../utils/array-helpers'
+import { useBasicGameProcess } from '../../hooks/basic-game-process'
 import styles from './game-screen.module.css'
 
 interface GameScreenProps {
@@ -12,8 +11,9 @@ interface GameScreenProps {
 }
 
 export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenProps) => {
-  const {rowsNumber, colsNumber} = gameConfigNumbers;
+  const {colsNumber} = gameConfigNumbers;
 
+  // TODO think about memoizing here
   const { normalizedObject, hasUserWon, hasUserLost, revealCell, toggleFlag } = useBasicGameProcess(gameConfigNumbers)
 
   useEffect(() => {
@@ -29,28 +29,27 @@ export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenP
   }, [hasUserLost, loseGame])
 
   return (
-    <div className={styles.overflow}>
-      <div className={styles.gameGrid}>
-        {arrayFromNumber(rowsNumber).map((r) => (
-          <div className={styles.gameRow} key={r}>
-            {arrayFromNumber(colsNumber).map((c) => {
-              const currentIndex = `${r - 1},${c - 1}`;
-              const { cellType, isRevealed, isFlagged, minesNumber } = normalizedObject[currentIndex]
-              return (
-                <Cell
-                  key={c}
-                  cellIndex={currentIndex}
-                  cellType={cellType}
-                  isRevealed={isRevealed}
-                  isFlagged={isFlagged}
-                  toggleFlag={() => toggleFlag(currentIndex)}
-                  revealCell={() => revealCell(currentIndex)}
-                  minesNumber={minesNumber}
-                />
-            )})}
-          </div>
-        ))}
-      </div>
+    <div
+      className={styles.gameGrid}
+      style={{ 
+        gridTemplateColumns: `repeat(${colsNumber}, 3rem)`
+      }}
+    >
+      {Object.keys(normalizedObject).map(currentIndex => {
+        const { cellType, isRevealed, isFlagged, minesNumber } = normalizedObject[currentIndex]
+        return (
+          <Cell
+            key={currentIndex}
+            cellIndex={currentIndex}
+            cellType={cellType}
+            isRevealed={isRevealed}
+            isFlagged={isFlagged}
+            toggleFlag={() => toggleFlag(currentIndex)}
+            revealCell={() => revealCell(currentIndex)}
+            minesNumber={minesNumber}
+          />
+        )
+      })}
     </div>
   )
 }

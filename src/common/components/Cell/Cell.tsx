@@ -1,4 +1,4 @@
-import { CellTypes, cellTypesMap } from './../../types/cellTypes'
+import { CellTypes, CellTypesMap } from './../../types/cellTypes'
 
 import styles from './cell.module.css'
 
@@ -25,9 +25,10 @@ export const Cell = ({ cellType, cellIndex, isRevealed, isFlagged, minesNumber, 
     }
 
     if (isFlagged) {
-      return cellTypesMap.flag
+      return CellTypesMap.flag
     }
   }
+
   return (
     <div
       className={styles.cell}

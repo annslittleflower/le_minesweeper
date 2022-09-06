@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { SetStateAction, useState } from 'react'
 import { FinishGameModal, FinishGameModalProps } from './components/FinishGameModal';
 import { Button } from './common/components/Button';
 import { StartScreen } from './screens/StartScreen'
@@ -14,19 +14,20 @@ type ModalPropsMapType = {
 }
 
 const App = () => {
-  const [currentGameState, setCurrentGameState] = useState<GAME_STATE_KEYS_TYPE>(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE)
+  // TODO make type below to be not function, just 'STARTING' | 'GAME_IS_LOST' etc....
+  const [currentGameState, setCurrentGameState] = useState<Partial<SetStateAction<GAME_STATE_KEYS_TYPE>>>(CURRENT_GAME_STATE_TYPE_MAP.STARTING)
   const [isGameResultModalOpened, setIsGameResultModalOpened ] = useState(false)
   const [gameConfigNumbers, setGameConfigNumbers] = useState<GameConfig | undefined>(undefined)
   const [seeResult, setSeeResult] = useState(false)
 
   const ModalPropsMap: ModalPropsMapType = {
     [CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_LOST] : {
-      onActionButtonClick: () => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE),
+      onActionButtonClick: () => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING),
       actionButtonText: 'Try again',
       gameResultText: 'You lost :(',
     },
     [CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_WON]: {
-      onActionButtonClick: () => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE),
+      onActionButtonClick: () => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING),
       actionButtonText: 'Play again',
       gameResultText: 'You win, congrats!',
     }
@@ -40,7 +41,7 @@ const App = () => {
       {currentGameState === CURRENT_GAME_STATE_TYPE_MAP.STARTING ? (
         <StartScreen
           setGameConfigNumbers={setGameConfigNumbers}
-          startGame={() => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_ON as GAME_STATE_KEYS_TYPE)}
+          startGame={() => setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_ON)}
         />
       ): null}
       {currentGameState !== CURRENT_GAME_STATE_TYPE_MAP.STARTING  && gameConfigNumbers ? (
@@ -48,17 +49,17 @@ const App = () => {
           gameConfigNumbers={gameConfigNumbers}
           loseGame={() => {
             setIsGameResultModalOpened(true)
-            setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_LOST as GAME_STATE_KEYS_TYPE)}
+            setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_LOST)}
           }
           winGame={() => {
             setIsGameResultModalOpened(true)
-            setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_WON as GAME_STATE_KEYS_TYPE)}
+            setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.GAME_IS_WON)}
           }
         />
       ): null}
       {isGameResultModalOpened && !seeResult && isGameOver ? (
         <FinishGameModal
-          {...ModalPropsMap[currentGameState]}
+          {...ModalPropsMap[currentGameState as GAME_STATE_KEYS_TYPE]}
           onClose={() => {
             setSeeResult(true)
             setIsGameResultModalOpened(false)
@@ -70,7 +71,7 @@ const App = () => {
         <Button
           onClick={() => {
             setSeeResult(false)
-            setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING as GAME_STATE_KEYS_TYPE)
+            setCurrentGameState(CURRENT_GAME_STATE_TYPE_MAP.STARTING)
           }}
         >
           Play again

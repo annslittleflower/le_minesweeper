@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { shuffle } from '../utils/array-helpers'
 import GameConfig from '../common/types/gameConfig'
-import { cellTypesMap, CellTypes } from '../common/types/cellTypes'
+import { CellTypesMap, CellTypes } from '../common/types/cellTypes'
 
 interface NormalizedObject {
   [key: string] : {
@@ -14,8 +14,8 @@ interface NormalizedObject {
 
 export const useBasicGameProcess = (gameConfig: GameConfig) => {
   const tempNormalizedObject = useMemo(() => {
-    const bombsArr = Array(gameConfig.bombsNumber).fill(cellTypesMap.bomb)
-    const emptyArr = Array(gameConfig.colsNumber * gameConfig.rowsNumber - bombsArr.length).fill(cellTypesMap.empty)
+    const bombsArr = Array(gameConfig.bombsNumber).fill(CellTypesMap.bomb)
+    const emptyArr = Array(gameConfig.colsNumber * gameConfig.rowsNumber - bombsArr.length).fill(CellTypesMap.empty)
     const board = shuffle(bombsArr.concat(emptyArr)) as string[]
     const tempNormalizedObject: NormalizedObject = {}
     
@@ -51,7 +51,7 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
 
     if (isFlagged || isRevealed) return;
 
-    if (cellType === cellTypesMap.bomb) {
+    if (cellType === CellTypesMap.bomb) {
       setHasUserLost(true)
       revealAll()
       return;
@@ -65,7 +65,7 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
 
     for (let r=Math.max(rowCoord - 1, 0); r<=Math.min(rowCoord + 1, gameConfig.rowsNumber - 1); r++) {
       for(let c=Math.max(colCoord - 1, 0); c<=Math.min(colCoord + 1, gameConfig.colsNumber - 1); c++) {
-        if (normalizedObject[`${r},${c}`].cellType === cellTypesMap.bomb) {
+        if (normalizedObject[`${r},${c}`].cellType === CellTypesMap.bomb) {
           minesNumber++;
         }
       }
@@ -74,7 +74,7 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
     if (minesNumber === 0) {
       for (let r=Math.max(rowCoord - 1, 0); r<=Math.min(rowCoord + 1, gameConfig.rowsNumber - 1); r++) {
         for(let c=Math.max(colCoord - 1, 0); c<=Math.min(colCoord + 1, gameConfig.colsNumber - 1); c++) {
-          if (normalizedObject[`${r},${c}`].cellType === cellTypesMap.empty) {
+          if (normalizedObject[`${r},${c}`].cellType === CellTypesMap.empty) {
             revealCell(`${r},${c}`)
           }
         }
@@ -96,11 +96,11 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
     Object.keys(normalizedObject).forEach((k) => {
       const { isFlagged, isRevealed, cellType } = normalizedObject[k]
 
-      if (isFlagged && cellType === cellTypesMap.bomb) {
+      if (isFlagged && cellType === CellTypesMap.bomb) {
         numberOfFlagsInBombCells++;
       }
 
-      if (isRevealed && cellType === cellTypesMap.empty) {
+      if (isRevealed && cellType === CellTypesMap.empty) {
         numberOfEmptyAndRevealedCells++
       }
     })
