@@ -29,27 +29,29 @@ export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenP
   }, [hasUserLost, loseGame])
 
   return (
-    <div
-      className={styles.gameGrid}
-      style={{ 
-        gridTemplateColumns: `repeat(${colsNumber}, 3rem)`
-      }}
-    >
-      {Object.keys(normalizedObject).map(currentIndex => {
-        const { cellType, isRevealed, isFlagged, minesNumber } = normalizedObject[currentIndex]
-        return (
-          <Cell
-            key={currentIndex}
-            cellIndex={currentIndex}
-            cellType={cellType}
-            isRevealed={isRevealed}
-            isFlagged={isFlagged}
-            toggleFlag={() => toggleFlag(currentIndex)}
-            revealCell={() => revealCell(currentIndex)}
-            minesNumber={minesNumber}
-          />
-        )
-      })}
+    <div className={styles.gridWrapper}>
+      <div
+        className={styles.gameGrid}
+        style={{ 
+          gridTemplateColumns: `repeat(${colsNumber}, 3rem)`,
+        }}
+      >
+        {Object.keys(normalizedObject).map(currentIndex => {
+          const { cellType, isRevealed, isFlagged, minesNumber } = normalizedObject[currentIndex]
+          return (
+            <Cell
+              key={currentIndex}
+              cellIndex={currentIndex}
+              cellType={cellType}
+              isRevealed={isRevealed}
+              isFlagged={isFlagged}
+              toggleFlag={() => toggleFlag(currentIndex)}
+              revealCell={() => revealCell(currentIndex)}
+              minesNumber={minesNumber}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }

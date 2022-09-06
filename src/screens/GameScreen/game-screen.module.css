@@ -1,12 +1,19 @@
+.gridWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
 .gameGrid {
   display: grid;
-  justify-content: center;
   border: 2px solid black;
   margin: 2rem auto;
   gap: 0.1rem;
   padding: 1rem;
   border-radius: 0.5rem;
   max-width: max-content;
+  overflow-y: auto;
 }
 
 .gameRow {
