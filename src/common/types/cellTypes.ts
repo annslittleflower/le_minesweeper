@@ -1,11 +1,7 @@
-export interface CellTypes {
-  bomb: string;
-  empty: string;
-  flag: string;
-}
-
-export const CellTypesMap: CellTypes = {
+export const CellTypesMap = {
   bomb: '💣',
   empty: 'E',
-  flag: '🚩'
-}
+  flag: '🚩',
+} as const
+
+export type EachCellType = typeof CellTypesMap.bomb | typeof CellTypesMap.empty | typeof CellTypesMap.flag

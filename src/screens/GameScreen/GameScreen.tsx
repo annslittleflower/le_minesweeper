@@ -13,7 +13,6 @@ interface GameScreenProps {
 export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenProps) => {
   const {colsNumber} = gameConfigNumbers;
 
-  // TODO think about memoizing here
   const { normalizedObject, hasUserWon, hasUserLost, revealCell, toggleFlag } = useBasicGameProcess(gameConfigNumbers)
 
   useEffect(() => {
@@ -45,9 +44,9 @@ export const GameScreen = ({ gameConfigNumbers, loseGame, winGame }: GameScreenP
               cellType={cellType}
               isRevealed={isRevealed}
               isFlagged={isFlagged}
-              toggleFlag={() => toggleFlag(currentIndex)}
-              revealCell={() => revealCell(currentIndex)}
               minesNumber={minesNumber}
+              toggleFlag={toggleFlag}
+              revealCell={revealCell}
             />
           )
         })}

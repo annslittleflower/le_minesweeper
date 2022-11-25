@@ -1,11 +1,10 @@
 import { useState, useMemo } from 'react'
 import { shuffle } from '../utils/array-helpers'
 import GameConfig from '../common/types/gameConfig'
-import { CellTypesMap, CellTypes } from '../common/types/cellTypes'
-
+import { CellTypesMap,} from '../common/types/cellTypes'
 interface NormalizedObject {
   [key: string] : {
-    cellType: keyof CellTypes,
+    cellType: typeof CellTypesMap.bomb | typeof CellTypesMap.empty | typeof CellTypesMap.flag | number, // google this one
     isRevealed: boolean,
     isFlagged: boolean,
     minesNumber: number
@@ -14,15 +13,15 @@ interface NormalizedObject {
 
 export const useBasicGameProcess = (gameConfig: GameConfig) => {
   const tempNormalizedObject = useMemo(() => {
-    const bombsArr = Array(gameConfig.bombsNumber).fill(CellTypesMap.bomb)
-    const emptyArr = Array(gameConfig.colsNumber * gameConfig.rowsNumber - bombsArr.length).fill(CellTypesMap.empty)
-    const board = shuffle(bombsArr.concat(emptyArr)) as string[]
+    const bombsArr: typeof CellTypesMap.bomb[] = Array(gameConfig.bombsNumber).fill(CellTypesMap.bomb)
+    const emptyArr: typeof CellTypesMap.empty[]  = Array(gameConfig.colsNumber * gameConfig.rowsNumber - bombsArr.length).fill(CellTypesMap.empty)
+    const board: (typeof CellTypesMap.empty | typeof CellTypesMap.bomb)[] = shuffle([...bombsArr, ...emptyArr])
     const tempNormalizedObject: NormalizedObject = {}
     
     for (let currentRow = 0; currentRow < gameConfig.rowsNumber; currentRow++) {
       for (let currentCol = 0; currentCol < gameConfig.colsNumber; currentCol++) {
         tempNormalizedObject[`${currentRow},${currentCol}`] = {
-          cellType: board[currentRow * gameConfig.colsNumber + currentCol] as keyof CellTypes,
+          cellType: board[currentRow * gameConfig.colsNumber + currentCol],
           isRevealed: false,
           isFlagged: false,
           minesNumber: 0
@@ -30,7 +29,7 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
       }
     }
 
-    console.log('HINT:', board)
+    console.log('BOARD:', board)
 
     return tempNormalizedObject
   }, [gameConfig])
@@ -44,6 +43,33 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
   const revealAll = () => {
     Object.keys(normalizedObject).forEach((k) => normalizedObject[k].isRevealed = true)
     setNormalizedObject({...normalizedObject})
+  }
+
+  const checkIfUserWon = () => {
+    const { bombsNumber } = gameConfig
+    let numberOfFlagsInBombCells = 0;
+    let numberOfEmptyAndRevealedCells = 0;
+
+    Object.keys(normalizedObject).forEach((k) => {
+      const { isFlagged, isRevealed, cellType } = normalizedObject[k]
+
+      if (isFlagged && cellType === CellTypesMap.bomb) {
+        numberOfFlagsInBombCells++;
+      }
+
+      if (isRevealed && cellType === CellTypesMap.empty) {
+        numberOfEmptyAndRevealedCells++
+      }
+    })
+
+    const isNumberOfFlagsIsEqualToNumberOfBombs = numberOfFlagsInBombCells === bombsNumber;
+    const isNumberOfEmptyAndRevealedCellsEqualToAllEmptyCells =
+      numberOfEmptyAndRevealedCells === (gameConfig.colsNumber * gameConfig.rowsNumber - gameConfig.bombsNumber)
+
+    if (isNumberOfFlagsIsEqualToNumberOfBombs && isNumberOfEmptyAndRevealedCellsEqualToAllEmptyCells) {
+      setHasUserWon(true)
+    }
+    
   }
 
   const revealCell = (cellIndex: string) => {
@@ -86,33 +112,6 @@ export const useBasicGameProcess = (gameConfig: GameConfig) => {
     setNormalizedObject({...normalizedObject})
 
     checkIfUserWon()
-  }
-
-  const checkIfUserWon = () => {
-    const { bombsNumber } = gameConfig
-    let numberOfFlagsInBombCells = 0;
-    let numberOfEmptyAndRevealedCells = 0;
-
-    Object.keys(normalizedObject).forEach((k) => {
-      const { isFlagged, isRevealed, cellType } = normalizedObject[k]
-
-      if (isFlagged && cellType === CellTypesMap.bomb) {
-        numberOfFlagsInBombCells++;
-      }
-
-      if (isRevealed && cellType === CellTypesMap.empty) {
-        numberOfEmptyAndRevealedCells++
-      }
-    })
-
-    const isNumberOfFlagsIsEqualToNumberOfBombs = numberOfFlagsInBombCells === bombsNumber;
-    const isNumberOfEmptyAndRevealedCellsEqualToAllEmptyCells =
-      numberOfEmptyAndRevealedCells === (gameConfig.colsNumber * gameConfig.rowsNumber - gameConfig.bombsNumber)
-
-    if (isNumberOfFlagsIsEqualToNumberOfBombs && isNumberOfEmptyAndRevealedCellsEqualToAllEmptyCells) {
-      setHasUserWon(true)
-    }
-    
   }
 
   const toggleFlag = (cellIndex: string) => {

@@ -1,19 +1,20 @@
-import { CellTypes, CellTypesMap } from './../../types/cellTypes'
+import { memo } from 'react';
+import { CellTypesMap, EachCellType } from './../../types/cellTypes'
 
 import styles from './cell.module.css'
 
 interface CellProps {
-  cellType: keyof CellTypes;
+  cellType: EachCellType | number;
   cellIndex: string;
   isRevealed: boolean;
   isFlagged: boolean;
   minesNumber: number;
 
   revealCell: (cellIndex: string) => void
-  toggleFlag: () => void;
+  toggleFlag: (cellIndex: string) => void;
 }
 
-export const Cell = ({ cellType, cellIndex, isRevealed, isFlagged, minesNumber, revealCell, toggleFlag }: CellProps) => {
+const CellComponent = ({ cellType, cellIndex, isRevealed, isFlagged, minesNumber, revealCell, toggleFlag }: CellProps) => {
   const renderCellContent = () => {
 
     if (minesNumber) {
@@ -29,13 +30,16 @@ export const Cell = ({ cellType, cellIndex, isRevealed, isFlagged, minesNumber, 
     }
   }
 
+  console.log('CELL IS RENDERING')
+
   return (
     <div
       className={styles.cell}
-      onClick={() => revealCell(cellIndex)}
+      data-cellindex={cellIndex}
+      onClick={(e) => revealCell(e.currentTarget.dataset.cellindex as string)}
       onContextMenu={(e) => {
         e.preventDefault();
-        toggleFlag()
+        toggleFlag(e.currentTarget.dataset.cellindex as string)
       }}
     >
       {renderCellContent()}
@@ -43,3 +47,31 @@ export const Cell = ({ cellType, cellIndex, isRevealed, isFlagged, minesNumber, 
   )
 }
 
+// wanna prevent ALL cell rendering on EACH click
+
+const areEqual = (prevProps: CellProps, nextProps: CellProps) => {
+  if (
+    prevProps.isFlagged === nextProps.isFlagged &&
+    prevProps.minesNumber === nextProps.minesNumber &&
+    prevProps.isRevealed === nextProps.isRevealed
+  ) return true
+
+  return false
+
+  /*
+
+    FROM documentation here https://reactjs.org/docs/react-api.html#reactmemo
+
+    "return true if passing nextProps to render would return
+    the same result as passing prevProps to render,
+    otherwise return false"
+
+    so if this 3 dependencies did not change - we dont render Cell component,
+    and should not see CELL IS RENDERING in console
+
+    if one if them changes - we render Cell component and see message in console
+
+  */
+}
+
+export const Cell = memo(CellComponent, areEqual)
